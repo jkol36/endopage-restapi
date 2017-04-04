@@ -15,7 +15,7 @@ router.route('/')
     mongoose
     .model('patient')
     .create(req.body)
-    .then(doctor => res.json(doctor))
+    .then(patient => res.json(patient))
   })
 
 

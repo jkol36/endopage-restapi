@@ -48,10 +48,22 @@ router.route('/login')
 router.route('/signup')
   .post((req, res) => {
     console.log('got signup request')
+    let query = {email: req.body.email}
+    let update = Object.assign({}, req.body, {password: bcrypt.hashSync(req.body.password, 10)})
+    let options = {upsert:true, new:true, setDefaultOnInsert:true}
     mongoose
     .model('user')
-    .create(Object.assign({}, req.body, {password: bcrypt.hashSync(req.body.password, 10)}))
-    .then(user => res.json(user).status(200))
+    .findOneAndUpdate(query, update, options)
+    .then(user => {
+      const payload = user
+      const secret = req.body.password
+      jwt.encode(secret, payload, ((err, token) => {
+          if(!!err) {
+            return res.status(err.status_code).send(err.message)
+          }
+          return res.status(200).json({token, user})
+        }))
+    })
     .catch(err => res.status(500).send('could not create user'))
   })
 

@@ -46,4 +46,21 @@ describe('routes', () => {
     })
     .catch(done)
   })
+  it('should create a new patient', done => {
+    let patient = {
+      doctor: 'mr shapira',
+      name: 'Jeremy Gibbens',
+      createdAt: Date.now(),
+      insurance: 'insurance 1'
+    }
+    agent
+    .post(process.env.API_URL+'/patient')
+    .send(patient)
+    .then(res => {
+      console.log(res.body)
+      expect(res).to.be.ok
+      expect(res.body).to.be.an('object')
+      done()
+    })
+  })
 })
